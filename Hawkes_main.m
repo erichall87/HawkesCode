@@ -16,8 +16,8 @@ saving = false; %Save the results in a .mat file
 savefigs = false; %Save figures as .pdf and .fig
 
 delta=.1; %Time discretization level
-T_horizon=1e4; %Length of sensing time
-no_iters = 1; %Number of independent trials of experiment
+T_horizon=1e3; %Length of sensing time
+no_iters = 2; %Number of independent trials of experiment
 
 N_delta=ceil(T_horizon/delta);
 eta=10/sqrt(N_delta); %Step size associated with rate
@@ -34,7 +34,7 @@ if T_horizon/delta~=N_delta
     warning('Works better when the Time horizon is a multiple of delta')
 end
 
-save_iters=20000; %Number of times to save the rates/estimates
+save_iters=min(20000,floor(N_delta/10)); %Save one out of every 'save_iters' rates estimates
 no_saves=floor(N_delta/save_iters);
 
 %At various times compute the loss with respect to current estimate
@@ -559,9 +559,9 @@ if graphing
     end
     
     W_true_top = zeros(size(W_true));
-    for k = 1:100
-        vals = sort(reshape(W_true(:,:,k),[10000,1]));
-        W_true_top(:,:,k) = W_true(:,:,k) > vals(9001);
+    for k = 1:no_iters
+        vals = sort(reshape(W_true(:,:,k),[p^2,1]));
+        W_true_top(:,:,k) = W_true(:,:,k) > vals(ceil(.9*p^2));
     end
     
     no_points = 500;
