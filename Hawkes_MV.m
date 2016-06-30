@@ -33,7 +33,8 @@ T_index=zeros(size(T));
 N=zeros(D,K+1);
 k = 1;
 fprintf('Generating Data: ')
-disp_space = 5000;
+%disp_space = 5000;
+disp_space = floor(.2*T_horizon);
 while max(T) < T_horizon
     if k>1 && mod(T(k),disp_space) < mod(T(k-1),disp_space)
         if ceil(T(k)/disp_space)*disp_space ~= T_horizon
@@ -67,7 +68,7 @@ while max(T) < T_horizon
     
     k = k+1;
 end
-fprintf('\n')
+fprintf(', 100%%\n')
 
 
 T=T(2:k-1);

@@ -17,7 +17,7 @@ savefigs = false; %Save figures as .pdf and .fig
 
 delta=.1; %Time discretization level
 T_horizon=1e3; %Length of sensing time
-no_iters = 2; %Number of independent trials of experiment
+no_iters = 4; %Number of independent trials of experiment
 
 N_delta=ceil(T_horizon/delta);
 eta=10/sqrt(N_delta); %Step size associated with rate
@@ -65,7 +65,7 @@ W_true = zeros(p,p,no_iters);
 
 for kk = 1:no_iters
     tic
-    fprintf('Iteration number: %d \t',kk)
+    fprintf('Iteration number: %d\n',kk)
     %Generate true network
     W = zeros(p);
     for a = 0:p-1
@@ -117,6 +117,7 @@ for kk = 1:no_iters
     batch_loss_OGD_beta(kk,1)=batch_loss_DMD(kk,1);
     
     %Our Algorithms
+    fprintf('Running algorithms: ')
     J=1; %Counter variable that goes through events to place them into data vectors
     for n=1:N_delta
         pct = N_delta/10;
@@ -258,46 +259,19 @@ if graphing
     title('Moving Average Loss','fontsize',16)
     hold off
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'MALossAlg2','-dpdf')
-        savefig('MALossAlg2.fig')
-    end
+    FormatFigures(ax, savefigs, 'MALossAlg2')
     
     figure(2)
-    plot(delta*(zeta:J:N_delta),median(ma_loss_OGD(:,1:J:end) - ma_loss_DMD_exp(:,1:J:end)),'b-',...
-        delta*(zeta:J:N_delta),prctile(ma_loss_OGD(:,1:J:end) - ma_loss_DMD_exp(:,1:J:end),95),'k-',...
-        delta*(zeta:J:N_delta),prctile(ma_loss_OGD(:,1:J:end) - ma_loss_DMD_exp(:,1:J:end),5),'k-','linewidth',3)
+    plot(delta*(zeta:J:N_delta),median(ma_loss_OGD(:,1:J:end) - ma_loss_DMD_exp(:,1:J:end),1),'b-',...
+        delta*(zeta:J:N_delta),prctile(ma_loss_OGD(:,1:J:end) - ma_loss_DMD_exp(:,1:J:end),95,1),'k-',...
+        delta*(zeta:J:N_delta),prctile(ma_loss_OGD(:,1:J:end) - ma_loss_DMD_exp(:,1:J:end),5,1),'k-','linewidth',3)
     xlabel('Time','fontsize',18)
     ylabel('Loss','fontsize',18)
+    title('Moving Average Difference of OGD and Alg 2','fontsize',16)
     curr_leg = legend('Median','95th Percentile','5th Percentile','location','southeast');
     set(curr_leg,'fontsize',18);
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'MADiffAlg2','-dpdf')
-        savefig('MADiffAlg2.fig')
-    end
+    FormatFigures(ax, savefigs, 'MADiffAlg2')
     
     figure(3)
     plot(delta*(zeta:J:N_delta),mean(ma_loss_DMD_W0_beta(:,1:J:end),1),...
@@ -311,46 +285,19 @@ if graphing
     ylabel('Loss','fontsize',18)
     title('Moving Average Loss, Mismatch','fontsize',16)
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'MALossAlg2Mismatch','-dpdf')
-        savefig('MALossAlg2Mismatch.fig')
-    end
+    FormatFigures(ax, savefigs, 'MALossAlg2Mismatch')
     
     figure(4)
-    plot(delta*(zeta:J:N_delta),median(ma_loss_OGD_beta(:,1:J:end) - ma_loss_DMD_exp_beta(:,1:J:end)),'b-',...
-        delta*(zeta:J:N_delta),prctile(ma_loss_OGD_beta(:,1:J:end) - ma_loss_DMD_exp_beta(:,1:J:end),95),'k-',...
-        delta*(zeta:J:N_delta),prctile(ma_loss_OGD_beta(:,1:J:end) - ma_loss_DMD_exp_beta(:,1:J:end),5),'k-','linewidth',3)
+    plot(delta*(zeta:J:N_delta),median(ma_loss_OGD_beta(:,1:J:end) - ma_loss_DMD_exp_beta(:,1:J:end),1),'b-',...
+        delta*(zeta:J:N_delta),prctile(ma_loss_OGD_beta(:,1:J:end) - ma_loss_DMD_exp_beta(:,1:J:end),95,1),'k-',...
+        delta*(zeta:J:N_delta),prctile(ma_loss_OGD_beta(:,1:J:end) - ma_loss_DMD_exp_beta(:,1:J:end),5,1),'k-','linewidth',3)
     xlabel('Time','fontsize',18)
     ylabel('Loss','fontsize',18)
+    title('Moving Average Difference of OGD and Alg 2, Model Mismatch','fontsize',16)
     curr_leg = legend('Median','95th Percentile','5th Percentile','location','southeast');
     set(curr_leg,'fontsize',18);
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'MADiffAlg2Mismatch','-dpdf')
-        savefig('MADiffAlg2Mismatch.fig')
-    end
+    FormatFigures(ax, savefigs, 'MADiffAlg2Mismatch')
     
     figure(5)
     imagesc(W,[0 1*max(W(:))])
@@ -358,22 +305,7 @@ if graphing
     title('True W Matrix','fontsize',18)
     colormap hot; colorbar;
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'TrueW','-dpdf')
-        savefig('TrueW.fig')
-    end
-    
+    FormatFigures(ax, savefigs, 'TrueW')
     
     figure(6)
     imagesc(W_DMD,[0 1*max(W_DMD(:))])
@@ -381,21 +313,7 @@ if graphing
     title('Alg 2 Estimate of W Matrix','fontsize',16)
     colormap hot; colorbar;
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'Alg2Estimate','-dpdf')
-        savefig('Alg2Estimate.fig')
-    end
+    FormatFigures(ax, savefigs, 'Alg2Estimate')
     
     figure(7)
     imagesc(W_OGD,[0 1*max(W_DMD(:))])
@@ -403,21 +321,7 @@ if graphing
     title('OGD Estimate of W Matrix','fontsize',16)
     colormap hot; colorbar;
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'OGDEstimate','-dpdf')
-        savefig('OGDEstimate.fig')
-    end
+    FormatFigures(ax, savefigs, 'OGDEstimate')
     
     figure(8)
     imagesc(W_DMD_beta,[0 1*max(W_DMD(:))])
@@ -425,78 +329,36 @@ if graphing
     title('Alg 2 Estimate of W Matrix, mismatch','fontsize',16)
     colormap hot; colorbar;
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'Alg2EstimateMismatch','-dpdf')
-        savefig('Alg2EstimateMismatch.fig')
-    end
-    
+    FormatFigures(ax, savefigs, 'Alg2EstimateMismatch')
+
     figure(9)
     imagesc(W_OGD_beta,[0 1*max(W_DMD(:))])
     axis off; axis square;
     title('OGD Estimate of W Matrix, mismatch','fontsize',16)
     colormap hot; colorbar;
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'OGDEstimateMismatch','-dpdf')
-        savefig('OGDEstimateMismatch.fig')
-    end
+    FormatFigures(ax, savefigs, 'OGDEstimateMismatch')
     
     figure(10)
-    plot(delta*((0:no_saves)*save_iters),mean(batch_loss_DMD),'b-',...
-        delta*((0:no_saves)*save_iters),mean(batch_loss_OGD),'r--',...
-        delta*((0:no_saves)*save_iters),mean(batch_loss_DMD_beta),'k-',...
-        delta*((0:no_saves)*save_iters),mean(batch_loss_OGD_beta),'c-',...
-        ...%[0 T_horizon],repmat(sum(loss_cont_true),1,2),
+    plot(delta*((0:no_saves)*save_iters),mean(batch_loss_DMD,1),'b-',...
+        delta*((0:no_saves)*save_iters),mean(batch_loss_OGD,1),'r--',...
+        delta*((0:no_saves)*save_iters),mean(batch_loss_DMD_beta,1),'k-',...
+        delta*((0:no_saves)*save_iters),mean(batch_loss_OGD_beta,1),'c-',...
         'linewidth',3)
     hold on
-    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_DMD),std(batch_loss_DMD),'b.')
-    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_OGD),std(batch_loss_OGD),'r.')
-    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_DMD_beta),std(batch_loss_DMD_beta),'k.')
-    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_OGD_beta),std(batch_loss_OGD_beta),'c.')
+    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_DMD,1),std(batch_loss_DMD,[],1),'b.')
+    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_OGD,1),std(batch_loss_OGD,[],1),'r.')
+    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_DMD_beta,1),std(batch_loss_DMD_beta,[],1),'k.')
+    errorbar(delta*((0:no_saves)*save_iters),mean(batch_loss_OGD_beta,1),std(batch_loss_OGD_beta,[],1),'c.')
     hold off
     xlabel('Time','fontsize',18)
     ylabel('Loss','fontsize',18)
+    title('Batch Losses vs Time','fontsize',16)
     curr_leg = legend('Alg 2','OGD','Alg 2, Mismatch','OGD, Mismatch',0);
     set(curr_leg,'fontsize',18)
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'BatchLoss','-dpdf')
-        savefig('BatchLoss.fig')
-    end
-    
+    FormatFigures(ax, savefigs, 'BatchLoss')
+
     no_points = 500;
     thresh = linspace(0,max([W_final_DMD(:);W_final_DMD_beta(:); W_final_OGD(:);W_final_OGD_beta(:)]),no_points);
     
@@ -538,30 +400,22 @@ if graphing
         P_f_OGD_beta,P_d_OGD_beta,'c-','linewidth',3)
     xlabel('P_f','fontsize',18)
     ylabel('P_d','fontsize',18)
+    title('ROC for W','fontsize',16)
     curr_leg=legend('Alg 2','OGD','Alg 2, Mismatch','OGD, Mismatch','location','southeast');
     set(curr_leg,'fontsize',18);
     axis square
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'ROC','-dpdf')
-        savefig('ROC.fig')
-    end
+    FormatFigures(ax, savefigs, 'ROC')
     
     W_true_top = zeros(size(W_true));
     for k = 1:no_iters
-        vals = sort(reshape(W_true(:,:,k),[p^2,1]));
-        W_true_top(:,:,k) = W_true(:,:,k) > vals(ceil(.9*p^2));
+        if no_iters > 1
+            vals = sort(reshape(W_true(:,:,k),[p^2,1]));
+            W_true_top(:,:,k) = W_true(:,:,k) > vals(ceil(.9*p^2));
+        else
+            vals = sort(W(:));
+            W_true_top = W_true > vals(ceil(.9*p^2));
+        end
     end
     
     no_points = 500;
@@ -605,24 +459,11 @@ if graphing
         P_f_OGD_beta,P_d_OGD_beta,'c-','linewidth',3)
     xlabel('P_f','fontsize',18)
     ylabel('P_d','fontsize',18)
+    title('ROC for Largest Elements of W','fontsize',16)
     curr_leg = legend('Alg 2','OGD','Alg 2, Mismatch','OGD, Mismatch','location','southeast');
     set(curr_leg,'fontsize',18)
     axis square
     ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3);
-    ax_height = outerpos(4) - ti(2) - ti(4);
-    ax.Position = [left bottom ax_width ax_height];
-    fig = gcf;
-    fig.PaperPositionMode = 'auto';
-    fig_pos = fig.PaperPosition;
-    fig.PaperSize = [fig_pos(3) fig_pos(4)];
-    if savefigs
-        print(fig,'ROCTop','-dpdf')
-        savefig('ROCTop.fig')
-    end
+    FormatFigures(ax, savefigs, 'ROCTop')
 end
 
