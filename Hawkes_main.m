@@ -243,7 +243,7 @@ if graphing
     ma_loss_OGD_beta=ifft(fft(loss_OGD_beta,[],2).*filt,[],2);
     ma_loss_OGD_beta=ma_loss_OGD_beta(:,zeta:end);
     
-    J=1000;
+    J=min(floor(N_delta/100),1000);
     
     figure(1)
     plot(delta*(zeta:J:N_delta),mean(ma_loss_DMD_W0(:,1:J:end),1),...
