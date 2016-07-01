@@ -2,9 +2,13 @@
 % from the paper.  Will not save estimates of rates or many estimates of W
 % for computation efficiency
 % Our algorithms are entitled DMD as they are based on our paper "Online
-% Convex Optimization in Dynamic Environments,? IEEE Journal of Selected
+% Convex Optimization in Dynamic Environments," IEEE Journal of Selected
 % Topics in Signal Processing - Signal Processing for Big Data,
 % vol. 9, no 4. 2015"
+% Replications section VII-B of "Tracking Dynamic Point Processes on
+% Networks," IEEE Replicates Section VII-A of "Tracking Dynamic Point
+%Processes on Networks" - IEEE Journal on Information Theory , 
+%vol 62, no 7. 2016.
 
 % Date created: 6/6/2014
 % Last modified: 6/30/2016
