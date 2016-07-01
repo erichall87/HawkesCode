@@ -80,7 +80,7 @@ for kk = 1:no_iters
     W = W*.8/norm(W,2);
     W_true(:,:,kk) = W;
     %Generate data
-    [T, T_index, mu_T] = Hawkes_MV(W,mu_bar,alpha,mu_0,T_horizon);
+    [T, T_index, mu_T] = HawkesMV(W,mu_bar,alpha,mu_0,T_horizon);
     N=length(T);
     
     lambda_DMD=mu_bar; %rate estimate for DMD with known W
@@ -110,8 +110,8 @@ for kk = 1:no_iters
     C2_t=zeros(p,1);
     
     %Calculating batch losses
-    loss_cont_true{kk}=Continuous_loss(T,T_index,alpha,mu_bar,W);
-    batch_loss_DMD(kk,1)=sum(Continuous_loss(T,T_index,alpha,mu_bar,W0));
+    loss_cont_true{kk}=ContinuousLoss(T,T_index,alpha,mu_bar,W);
+    batch_loss_DMD(kk,1)=sum(ContinuousLoss(T,T_index,alpha,mu_bar,W0));
     batch_loss_OGD(kk,1)=batch_loss_DMD(kk,1);
     batch_loss_DMD_beta(kk,1)=batch_loss_DMD(kk,1);
     batch_loss_OGD_beta(kk,1)=batch_loss_DMD(kk,1);
@@ -128,10 +128,10 @@ for kk = 1:no_iters
         end
         
         if mod(n,save_iters)==0
-            batch_loss_DMD(kk,(n/save_iters)+1)=sum(Continuous_loss(T,T_index,alpha,mu_bar,W_DMD));
-            batch_loss_OGD(kk,(n/save_iters)+1)=sum(Continuous_loss(T,T_index,alpha,mu_bar,W_OGD));
-            batch_loss_DMD_beta(kk,(n/save_iters)+1)=sum(Continuous_loss(T,T_index,alpha,mu_bar,W_DMD_beta));
-            batch_loss_OGD_beta(kk,(n/save_iters)+1)=sum(Continuous_loss(T,T_index,alpha,mu_bar,W_OGD_beta));
+            batch_loss_DMD(kk,(n/save_iters)+1)=sum(ContinuousLoss(T,T_index,alpha,mu_bar,W_DMD));
+            batch_loss_OGD(kk,(n/save_iters)+1)=sum(ContinuousLoss(T,T_index,alpha,mu_bar,W_OGD));
+            batch_loss_DMD_beta(kk,(n/save_iters)+1)=sum(ContinuousLoss(T,T_index,alpha,mu_bar,W_DMD_beta));
+            batch_loss_OGD_beta(kk,(n/save_iters)+1)=sum(ContinuousLoss(T,T_index,alpha,mu_bar,W_OGD_beta));
         end
         %Compute data vectors
         x_t=zeros(p,1);

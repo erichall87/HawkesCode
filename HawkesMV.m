@@ -18,7 +18,7 @@
 % Code created: 10/09/2013
 % Last Modified: 1/06/2016
 
-function [T, T_index, mu_T] = Hawkes_MV(W,mu_bar,alpha,mu_0,T_horizon)
+function [T, T_index, mu_T] = HawkesMV(W,mu_bar,alpha,mu_0,T_horizon)
 
 K = 5000;
 D = length(mu_bar);

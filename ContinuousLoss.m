@@ -1,5 +1,5 @@
-function out = Continuous_loss(T,T_index,alpha,mu_bar,W)
-% CONTINUOUS_LOSS   Calculates the continuous time loss for a Hawkes
+function out = ContinuousLoss(T,T_index,alpha,mu_bar,W)
+% CONTINUOUSLOSS   Calculates the continuous time loss for a Hawkes
 % Process with exponential decay
 %
 % This function takes in event times and nodes, as well with parameters of
